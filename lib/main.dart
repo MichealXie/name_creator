@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
 
+const List<Color> themeColors = [Colors.blue, Colors.lightGreen, Colors.blueGrey];
+var currentThemeColor = themeColors[0];
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -12,6 +15,9 @@ class MyApp extends StatelessWidget {
           child: RandomWords(),
         ),
       ),
+      theme: new ThemeData(
+        primaryColor: currentThemeColor,
+      )
     );
   }
 }
@@ -58,10 +64,27 @@ class RandomWordsState extends State<RandomWords>{
               tiles: tiles,
             )
             .toList();
+          
+          return new Scaffold(
+            appBar: new AppBar(title: Text('已保存的名字'),),
+            body: new ListView(children: divided,)
+          );
         },
       ),
     );
   }
+
+  _changeTheme() {
+    var colorIndex = themeColors.indexOf(currentThemeColor);
+    var nextColorIndex = colorIndex == (themeColors.length - 1) ? 0 : colorIndex + 1;
+    print(nextColorIndex);
+    print(themeColors[nextColorIndex]);
+
+    setState(() {
+      currentThemeColor = themeColors[nextColorIndex];
+    });
+  }
+
   Widget _buildRow(WordPair pair) {
     final bool alreadySaved = _saved.contains(pair);
     
@@ -75,7 +98,6 @@ class RandomWordsState extends State<RandomWords>{
         color: alreadySaved ? Colors.red : null,
       ),
       onTap: () {
-        print(_saved);
         setState(() {
           if (alreadySaved) _saved.remove(pair);
           else _saved.add(pair);
@@ -93,6 +115,10 @@ class RandomWordsState extends State<RandomWords>{
           new IconButton(
             icon: const Icon(Icons.list),
             onPressed: _pushSaved,
+          ),
+          new IconButton(
+            icon: const Icon(Icons.color_lens),
+            onPressed: _changeTheme,
           )
         ],
       ),
